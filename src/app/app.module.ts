@@ -9,38 +9,36 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatInputModule } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatCardModule} from '@angular/material/card';
-import {MatIconModule} from '@angular/material/icon';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatListModule} from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatNativeDateModule,
-    MatDatepickerModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatCardModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatListModule
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatNativeDateModule,
+        MatDatepickerModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatCardModule,
+        MatIconModule,
+        MatSnackBarModule,
+        MatListModule,
     ],
-  providers: [DatePipe],
-  bootstrap: [AppComponent]
+    providers: [DatePipe],
+    bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
