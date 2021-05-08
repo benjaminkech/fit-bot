@@ -51,6 +51,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'fit-bot-rwc'
-        slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_feb1482ea57949a981279a800459b3f3 }}
         package: ./dist/migros-fitness-waitlist-rwc
