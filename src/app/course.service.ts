@@ -77,7 +77,7 @@ export interface Trigger {
   providedIn: 'root'
 })
 export class CourseService {
-  private REST_API: string = "/api";
+  private REST_API: string = "https://blfa-api.migros.ch/fp/api";
   private TRIGGER_API: string = "https://prod-09.switzerlandnorth.logic.azure.com:443/workflows/517f96c449534eedb35e3cd5126fa9e8/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=STVYYosgiY3V_y33rDOzNmfE7YzUTdGHkL3VBo2WUeQ";
 
   constructor(private _http:HttpClient) { }
