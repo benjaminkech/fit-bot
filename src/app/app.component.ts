@@ -1,7 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
+import { FormControl, FormGroup } from '@angular/forms';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { config, Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Course, CourseService, Trigger } from './course.service';
 
@@ -12,15 +13,17 @@ import { Course, CourseService, Trigger } from './course.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'migros-fitness-waitlist-rwc';
-
+  durationInSeconds = 5;
   options: Course[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   filteredOptions!: Observable<Course[]>;
   form: FormGroup = new FormGroup({});
 
-  constructor(private _courseService: CourseService, private datePipe: DatePipe, private formBuilder: FormBuilder) {
-
-  }
+  constructor(
+    private _courseService: CourseService, 
+    private _datePipe: DatePipe, 
+    private _snackBar: MatSnackBar
+    ) {}
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -61,25 +64,39 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private _filterDate(value: string): Course[] {
-    const filterValue = this.datePipe.transform(value,'YYYY-MM-dd');
+    const filterValue = this._datePipe.transform(value,'YYYY-MM-dd');
     return this.options.filter(c => c.date === filterValue);
   }
 
   onSubmit() {
-   const date = this.datePipe.transform(this.form.value.date,'YYYY-MM-dd');
+   const date = this._datePipe.transform(this.form.value.date,'YYYY-MM-dd');
    const to = this.form.value.phone;
    const id = this.form.value.course.id;
-   const body = { id, date, to } as Trigger;
-
-   console.log(body);
+   const body = { id, date } as Trigger;
+   let status = null;
    this._courseService.postTrigger(body).subscribe(data => {
-      console.log(data)
+     status = data.status;
    })
+   this.openSnackBar(status);
   }
 
   getOptionText(option: Course): string {
     if (!option) return '';
     console.log(option)
     return option.title + " " + option.timeStart;
+  }
+
+  openSnackBar(status: Number | null) {
+    let message = "You will get a confirmation in a sec.";
+    const action = undefined;
+    const config: MatSnackBarConfig = { 
+      duration: 3000,
+      panelClass: ['snackbar-success']
+    };
+    if (status !== 202) {
+      config.panelClass = ['snackbar-error']
+      message = "There was an error";
+    }
+    this._snackBar.open(message, action, config);
   }
 }

@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 
 export interface Weekday {
   id: number;
@@ -89,7 +89,7 @@ export class CourseService {
       );
   }
 
-  postTrigger(body: Trigger): Observable<any> {
-    return this._http.post<Trigger>(this.TRIGGER_API, body);
+  postTrigger(data: Trigger): Observable<any> {
+    return this._http.post<Trigger>(this.TRIGGER_API, data, {observe: 'response'})
   }
 }
