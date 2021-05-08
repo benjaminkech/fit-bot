@@ -87,9 +87,7 @@ export class CourseService {
     getAllCourses(): Observable<Course[]> {
         return this.http
             .post<Response>(this.REST_API, { path: '/coursematrix/5/de' })
-            .pipe(
-                map((res) => res.courses.filter((c) => c.enrolment === false))
-            );
+            .pipe(map((res) => res.courses.filter((c) => c.enrolment === false)));
     }
 
     postTrigger(data: Trigger): Observable<any> {

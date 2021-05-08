@@ -1,11 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-    AbstractControl,
-    FormControl,
-    FormGroup,
-    Validators,
-} from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -24,20 +19,13 @@ export class AppComponent implements OnInit, OnDestroy {
     filteredOptions: Observable<Course[]> | undefined;
     form: FormGroup = new FormGroup({});
 
-    constructor(
-        private courseService: CourseService,
-        private datePipe: DatePipe,
-        private snackBar: MatSnackBar
-    ) {}
+    constructor(private courseService: CourseService, private datePipe: DatePipe, private snackBar: MatSnackBar) {}
 
     ngOnInit(): void {
         this.form = new FormGroup({
             date: new FormControl('', Validators.required),
             course: new FormControl('', Validators.required),
-            phone: new FormControl('', [
-                Validators.required,
-                Validators.pattern('^[0-9]{9}$'),
-            ]),
+            phone: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{9}$')]),
         });
 
         this.courseService.getAllCourses().subscribe((data: Course[]) => {
@@ -46,7 +34,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.filteredOptions = this.course?.valueChanges.pipe(
             startWith(''),
-            map((value) => this._filterTitle(value))
+            map((value) => this._filterTitle(value)),
         );
 
         this.filteredOptions = this.date?.valueChanges.pipe(
@@ -54,7 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
             map((value) => {
                 this.course?.reset();
                 return this._filterDate(value);
-            })
+            }),
         );
     }
 
@@ -77,9 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private _filterTitle(value: string): Course[] {
         const filterValue = value.toLowerCase();
 
-        return this.options.filter(
-            (c) => c.title.toLowerCase().indexOf(filterValue) === 0
-        );
+        return this.options.filter((c) => c.title.toLowerCase().indexOf(filterValue) === 0);
     }
 
     private _filterDate(value: string): Course[] {
@@ -88,10 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(): void {
-        const date = this.datePipe.transform(
-            this.form.value.date,
-            'YYYY-MM-dd'
-        );
+        const date = this.datePipe.transform(this.form.value.date, 'YYYY-MM-dd');
         const to = '+41' + this.form.value.phone;
         const id = this.form.value.course.id;
 
@@ -111,7 +94,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 const message = 'Ups there was an error.';
                 config.panelClass = ['snackbar-error'];
                 this.openSnackBar(message, action, config);
-            }
+            },
         );
     }
 
@@ -122,13 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
         return option.title;
     }
 
-    openSnackBar(
-        message: string,
-        action: string | undefined,
-        config: MatSnackBarConfig
-    ): void {
-
-      
-        this.snackBar.open(message, action, config)
+    openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
+        this.snackBar.open(message, action, config);
     }
 }

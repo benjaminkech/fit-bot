@@ -25,7 +25,7 @@ describe('AppComponent', () => {
         fixture.detectChanges();
         const compiled = fixture.nativeElement;
         expect(compiled.querySelector('.content span').textContent).toContain(
-            'migros-fitness-waitlist-rwc app is running!'
+            'migros-fitness-waitlist-rwc app is running!',
         );
     });
 });
