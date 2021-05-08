@@ -1,5 +1,5 @@
 {
-    "/api": {
+    "/api/*": {
       "target": "https://blfa-api.migros.ch/fp/api",
       "secure": true,
       "changeOrigin": true,
