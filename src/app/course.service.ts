@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { catchError, filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 export interface Weekday {
   id: number;

@@ -2,5 +2,4 @@
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-.snackbar-success { background: #46a35e; }
-.snackbar-error { background: #f44336; }
+.snackbar-error { background: #f44336; color: #ffffff }
