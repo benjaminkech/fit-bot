@@ -127,6 +127,8 @@ export class AppComponent implements OnInit, OnDestroy {
         action: string | undefined,
         config: MatSnackBarConfig
     ): void {
+
+      
         this.snackBar.open(message, action, config)
     }
 }
