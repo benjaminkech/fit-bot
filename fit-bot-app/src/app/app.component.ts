@@ -4,7 +4,7 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { AppConfigService } from './appconfig.service';
+import { AppService } from './app.service';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
 
@@ -22,14 +22,8 @@ export class AppComponent implements OnInit, OnDestroy {
     form: FormGroup = new FormGroup({});
     toolbar: boolean = true;
     logo: string = '../assets/logo.svg';
-    settings: any;
 
-    constructor(
-        private courseService: CourseService,
-        private datePipe: DatePipe,
-        private snackBar: MatSnackBar,
-        private appConfigService: AppConfigService,
-    ) {}
+    constructor(private courseService: CourseService, private datePipe: DatePipe, private snackBar: MatSnackBar) {}
 
     ngOnInit(): void {
         this.form = new FormGroup({
@@ -138,9 +132,5 @@ export class AppComponent implements OnInit, OnDestroy {
 
     openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
         this.snackBar.open(message, action, config);
-    }
-
-    getAppSettings() {
-        this.settings = this.appConfigService.settings;
     }
 }
