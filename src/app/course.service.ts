@@ -84,6 +84,8 @@ export class CourseService {
 
     constructor(private http: HttpClient) {}
 
+    rootURL = '/api';
+
     getAllCourses(): Observable<Course[]> {
         return this.http
             .post<Response>(this.REST_API, { path: '/coursematrix/5/de' })
@@ -94,5 +96,9 @@ export class CourseService {
         return this.http.post<Trigger>(this.TRIGGER_API, data, {
             observe: 'response',
         });
+    }
+
+    getSettings(url: string) {
+        return this.http.get(this.rootURL + '/' + url);
     }
 }

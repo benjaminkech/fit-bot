@@ -19,6 +19,8 @@ import { MatListModule } from '@angular/material/list';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { IosInstallComponent } from './ios-install/ios-install.component';
+import { AppConfigService } from './appconfig.service';
+import { AppConfigModule } from './appconfig/appconfig.module';
 
 @NgModule({
     declarations: [AppComponent, IosInstallComponent],
@@ -39,6 +41,7 @@ import { IosInstallComponent } from './ios-install/ios-install.component';
         MatIconModule,
         MatSnackBarModule,
         MatListModule,
+        AppConfigModule,
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: environment.production,
             // Register the ServiceWorker as soon as the app is stable
@@ -46,7 +49,7 @@ import { IosInstallComponent } from './ios-install/ios-install.component';
             registrationStrategy: 'registerWhenStable:30000',
         }),
     ],
-    providers: [DatePipe],
+    providers: [DatePipe, AppConfigService],
     bootstrap: [AppComponent],
     entryComponents: [IosInstallComponent],
 })

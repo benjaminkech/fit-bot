@@ -14,18 +14,16 @@ describe('AppComponent', () => {
         expect(app).toBeTruthy();
     });
 
-    it(`should have as title 'migros-fitness-waitlist-rwc'`, () => {
+    it(`should have as title 'FIT BOT'`, () => {
         const fixture = TestBed.createComponent(AppComponent);
         const app = fixture.componentInstance;
-        expect(app.title).toEqual('migros-fitness-waitlist-rwc');
+        expect(app.title).toEqual('FIT BOT');
     });
 
     it('should render title', () => {
         const fixture = TestBed.createComponent(AppComponent);
         fixture.detectChanges();
         const compiled = fixture.nativeElement;
-        expect(compiled.querySelector('.content span').textContent).toContain(
-            'migros-fitness-waitlist-rwc app is running!',
-        );
+        expect(compiled.querySelector('.content span').textContent).toContain('FIT BOT app is running!');
     });
 });
