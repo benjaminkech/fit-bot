@@ -1,5 +1,5 @@
-<mat-toolbar color="primary">
-    <img src="../assets/logo.svg" class="logo" />
+<mat-toolbar color="primary" [ngClass]="{ mobile: toolbar == false }">
+    <img [src]="logo" class="logo" />
     <span class="fill-remaining-space"></span>
 </mat-toolbar>
 <div class="container">
@@ -44,6 +44,9 @@
             </mat-list-item>
             <mat-list-item> <mat-icon matSuffix>directions_run</mat-icon>{{ course?.value.instructor }} </mat-list-item>
         </mat-list>
-        <button mat-raised-button color="primary" [disabled]="!form.valid">Get Notification</button>
+        <button mat-raised-button color="primary" [disabled]="!form.valid">
+            <mat-icon>notifications</mat-icon>
+            Get Notification
+        </button>
     </form>
 </div>

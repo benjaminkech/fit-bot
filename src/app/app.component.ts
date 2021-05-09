@@ -5,11 +5,12 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Course, CourseService, Trigger } from './course.service';
+import { IosInstallComponent } from './ios-install/ios-install.component';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
+    styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
     title = 'migros-fitness-waitlist-rwc';
@@ -18,6 +19,8 @@ export class AppComponent implements OnInit, OnDestroy {
     destroy$: Subject<boolean> = new Subject<boolean>();
     filteredOptions: Observable<Course[]> | undefined;
     form: FormGroup = new FormGroup({});
+    toolbar: boolean = true;
+    logo: string = '../assets/logo.svg';
 
     constructor(private courseService: CourseService, private datePipe: DatePipe, private snackBar: MatSnackBar) {}
 
@@ -44,6 +47,27 @@ export class AppComponent implements OnInit, OnDestroy {
                 return this._filterDate(value);
             }),
         );
+
+        // Detects if device is on iOS
+        const isIos = () => {
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            return /iphone|ipad|ipod/.test(userAgent);
+        };
+        // Detects if device is in standalone mode
+        const isInStandaloneMode = () =>
+            'standalone' in (window as any).navigator && (window as any).navigator.standalone;
+
+        // Checks if should display install popup notification:
+        if (isIos() && !isInStandaloneMode()) {
+            this.snackBar.openFromComponent(IosInstallComponent, {
+                duration: 8000,
+                horizontalPosition: 'start',
+                panelClass: ['mat-elevation-z3'],
+            });
+        } else if (isIos() && isInStandaloneMode()) {
+            this.toolbar = false;
+            this.logo = '../assets/logo-primary.svg';
+        }
     }
 
     get date(): AbstractControl | null {
