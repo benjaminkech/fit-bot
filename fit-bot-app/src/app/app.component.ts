@@ -7,6 +7,7 @@ import { map, startWith } from 'rxjs/operators';
 import { AppService } from './app.service';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
+import { NotificationService } from './notification.service';
 
 @Component({
     selector: 'app-root',
@@ -23,7 +24,12 @@ export class AppComponent implements OnInit, OnDestroy {
     toolbar: boolean = true;
     logo: string = '../assets/logo.svg';
 
-    constructor(private courseService: CourseService, private datePipe: DatePipe, private snackBar: MatSnackBar) {}
+    constructor(
+        private courseService: CourseService,
+        private datePipe: DatePipe,
+        private snackBar: MatSnackBar,
+        private notificationService: NotificationService,
+    ) {}
 
     ngOnInit(): void {
         this.form = new FormGroup({
@@ -110,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy {
             duration: 3000,
         };
 
-        this.courseService.postTrigger(body).subscribe(
+        this.notificationService.postTrigger(body).subscribe(
             (data) => {
                 const message = 'You will get a confirmation in a sec. 🎉';
                 this.openSnackBar(message, action, config);

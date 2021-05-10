@@ -4,7 +4,7 @@ updates:
     directory: "/fit-bot-app"
     schedule:
       interval: "daily"
-  - package-ecosystem: npm
+  - package-ecosystem: nuget
     directory: "/api"
     schedule:
       interval: "daily"

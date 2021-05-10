@@ -5,9 +5,9 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class AppService {
-    constructor(private http: HttpClient) {}
-
     rootURL = '/api';
+
+    constructor(private http: HttpClient) {}
 
     getSettings(url: string) {
         return this.http.get(this.rootURL + '/' + url);

@@ -79,19 +79,15 @@ export interface Trigger {
 })
 export class CourseService {
     settings: any;
+    rootURL = '/api';
+
     constructor(private http: HttpClient, private appConfigService: AppConfigService) {
         this.settings = this.appConfigService.settings;
     }
 
     getAllCourses(): Observable<Course[]> {
         return this.http
-            .post<Response>(this.settings.migrosApi, { path: '/coursematrix/5/de' })
+            .get<Response>(this.rootURL + '/course')
             .pipe(map((res) => res.courses.filter((c) => c.enrolment === false)));
-    }
-
-    postTrigger(data: Trigger): Observable<any> {
-        return this.http.post<Trigger>(this.settings.triggerApi, data, {
-            observe: 'response',
-        });
     }
 }
