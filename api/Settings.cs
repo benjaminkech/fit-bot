@@ -23,7 +23,6 @@ namespace FitBot.Settings
             var myObj = new { migrosApi, triggerApi };
      
             return  new OkObjectResult(myObj);
-
         }
         public static string GetEnvironmentVariable(string name) 
         {

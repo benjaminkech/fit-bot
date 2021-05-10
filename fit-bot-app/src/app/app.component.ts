@@ -1,10 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { Observable, Subject } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { AppService } from './app.service';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
 import { NotificationService } from './notification.service';
@@ -14,46 +13,46 @@ import { NotificationService } from './notification.service';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
     title = 'FIT BOT';
     durationInSeconds = 5;
-    options: Course[] = [];
-    destroy$: Subject<boolean> = new Subject<boolean>();
-    filteredOptions: Observable<Course[]> | undefined;
+    filteredOptions$: Observable<Course[]> | undefined;
     form: FormGroup = new FormGroup({});
     toolbar: boolean = true;
     logo: string = '../assets/logo.svg';
+    minDate: Date;
+    maxDate: Date;
 
     constructor(
         private courseService: CourseService,
         private datePipe: DatePipe,
         private snackBar: MatSnackBar,
-        private notificationService: NotificationService,
-    ) {}
+        private notificationService: NotificationService
+    ) {
+        this.minDate = new Date();
+        this.maxDate = new Date();
+        this.maxDate.setDate(this.minDate.getDate() + 20);
+    }
 
     ngOnInit(): void {
         this.form = new FormGroup({
-            date: new FormControl('', Validators.required),
+            date: new FormControl(new Date(), Validators.required),
             course: new FormControl('', Validators.required),
             phone: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{9}$')]),
         });
 
-        this.courseService.getAllCourses().subscribe((data: Course[]) => {
-            this.options = data;
-        });
-
-        this.filteredOptions = this.course?.valueChanges.pipe(
-            startWith(''),
-            map((value) => this._filterTitle(value)),
-        );
-
-        this.filteredOptions = this.date?.valueChanges.pipe(
-            startWith(''),
-            map((value) => {
-                this.course?.reset();
-                return this._filterDate(value);
-            }),
-        );
+        if (this.date !== null) {
+            this.filteredOptions$ = combineLatest([
+                this.date.valueChanges.pipe(startWith('')),
+                this.courseService.getAllCourses(),
+            ]).pipe(
+                map(([date, courses]) => {
+                    console.log('Changed');
+                    this.course?.reset();
+                    return courses.filter(course => course.date === this._transformDate(date));
+                })
+            );
+        }
 
         // Detects if device is on iOS
         const isIos = () => {
@@ -87,25 +86,12 @@ export class AppComponent implements OnInit, OnDestroy {
         return this.form.get('phone');
     }
 
-    ngOnDestroy(): void {
-        this.destroy$.next(true);
-        // Unsubscribe from the subject
-        this.destroy$.unsubscribe();
-    }
-
-    private _filterTitle(value: string): Course[] {
-        const filterValue = value.toLowerCase();
-
-        return this.options.filter((c) => c.title.toLowerCase().indexOf(filterValue) === 0);
-    }
-
-    private _filterDate(value: string): Course[] {
-        const filterValue = this.datePipe.transform(value, 'YYYY-MM-dd');
-        return this.options.filter((c) => c.date === filterValue);
+    private _transformDate(value: string): string | null {
+        return this.datePipe.transform(value, 'YYYY-MM-dd');
     }
 
     onSubmit(): void {
-        const date = this.datePipe.transform(this.form.value.date, 'YYYY-MM-dd');
+        const date = this._transformDate(this.form.value.date);
         const to = '+41' + this.form.value.phone;
         const id = this.form.value.course.id;
 
@@ -117,15 +103,15 @@ export class AppComponent implements OnInit, OnDestroy {
         };
 
         this.notificationService.postTrigger(body).subscribe(
-            (data) => {
+            data => {
                 const message = 'You will get a confirmation in a sec. 🎉';
                 this.openSnackBar(message, action, config);
             },
-            (error) => {
+            error => {
                 const message = 'Ups there was an error.';
                 config.panelClass = ['snackbar-error'];
                 this.openSnackBar(message, action, config);
-            },
+            }
         );
     }
 

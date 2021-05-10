@@ -80,14 +80,20 @@ export interface Trigger {
 export class CourseService {
     settings: any;
     rootURL = '/api';
+    timezone = 'GMT+0200';
 
     constructor(private http: HttpClient, private appConfigService: AppConfigService) {
         this.settings = this.appConfigService.settings;
     }
 
     getAllCourses(): Observable<Course[]> {
-        return this.http
-            .get<Response>(this.rootURL + '/course')
-            .pipe(map((res) => res.courses.filter((c) => c.enrolment === false)));
+        return this.http.get<Response>(this.rootURL + '/course').pipe(
+            map(res =>
+                res.courses.filter(c => {
+                    const unixTimeZero = Date.parse(c.date + ' ' + c.timeStart + ' ' + this.timezone);
+                    return c.enrolment === false && unixTimeZero > Date.now();
+                })
+            )
+        );
     }
 }
