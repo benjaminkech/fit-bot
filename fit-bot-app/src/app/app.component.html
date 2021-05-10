@@ -13,7 +13,7 @@
         <div [hidden]="(filteredOptions$ | async)?.length === 0">
             <mat-form-field appearance="fill" class="field-full-width">
                 <mat-label>Course</mat-label>
-                <mat-select>
+                <mat-select formControlName="course">
                     <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">
                         {{ option.title }}
                     </mat-option>

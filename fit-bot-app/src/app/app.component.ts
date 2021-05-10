@@ -114,13 +114,6 @@ export class AppComponent implements OnInit {
         );
     }
 
-    getOptionText(option: Course): string {
-        if (!option) {
-            return '';
-        }
-        return option.title;
-    }
-
     openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
         this.snackBar.open(message, action, config);
     }
