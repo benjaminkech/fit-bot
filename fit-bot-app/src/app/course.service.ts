@@ -80,7 +80,7 @@ export interface Trigger {
 export class CourseService {
     settings: any;
     rootURL = '/api';
-    timezone = 'GMT+0200';
+    timezone = '+02:00';
 
     constructor(private http: HttpClient, private appConfigService: AppConfigService) {
         this.settings = this.appConfigService.settings;
@@ -90,7 +90,7 @@ export class CourseService {
         return this.http.get<Response>(this.rootURL + '/course').pipe(
             map(res =>
                 res.courses.filter(c => {
-                    const unixTimeZero = Date.parse(c.date + ' ' + c.timeStart + ' ' + this.timezone);
+                    const unixTimeZero = Date.parse(c.date + 'T' + c.timeStart + this.timezone);
                     return c.enrolment === false && unixTimeZero > Date.now();
                 })
             )

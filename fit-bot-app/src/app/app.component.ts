@@ -47,7 +47,6 @@ export class AppComponent implements OnInit {
                 this.courseService.getAllCourses(),
             ]).pipe(
                 map(([date, courses]) => {
-                    console.log('Changed');
                     this.course?.reset();
                     return courses.filter(course => course.date === this._transformDate(date));
                 })
