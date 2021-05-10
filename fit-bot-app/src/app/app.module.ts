@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,6 +20,7 @@ import { environment } from '../environments/environment';
 import { IosInstallComponent } from './ios-install/ios-install.component';
 import { AppConfigService } from './appconfig.service';
 import { AppConfigModule } from './appconfig/appconfig.module';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
     declarations: [AppComponent, IosInstallComponent],
@@ -30,7 +30,7 @@ import { AppConfigModule } from './appconfig/appconfig.module';
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
-        MatAutocompleteModule,
+        MatSelectModule,
         MatFormFieldModule,
         MatInputModule,
         MatNativeDateModule,
