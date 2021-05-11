@@ -17,14 +17,13 @@ namespace FitBot.Settings
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string migrosApi = await GetEnvironmentVariable("MIGROS_API");
             string triggerApi = await GetEnvironmentVariable("TRIGGER_API");
 
-            var myObj = new { migrosApi, triggerApi };
-     
+            var myObj = new { triggerApi };
+
             return new OkObjectResult(myObj);
         }
-        public static Task<string> GetEnvironmentVariable(string name) 
+        public static Task<string> GetEnvironmentVariable(string name)
         {
             return Task.FromResult(System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process));
         }

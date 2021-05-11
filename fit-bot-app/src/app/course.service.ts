@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AppConfigService } from './appconfig.service';
 
 export interface Weekday {
     id: number;
@@ -78,13 +77,10 @@ export interface Trigger {
     providedIn: 'root',
 })
 export class CourseService {
-    settings: any;
     rootURL = '/api';
     timezone = '+02:00';
 
-    constructor(private http: HttpClient, private appConfigService: AppConfigService) {
-        this.settings = this.appConfigService.settings;
-    }
+    constructor(private http: HttpClient) {}
 
     getAllCourses(): Observable<Course[]> {
         return this.http.get<Response>(this.rootURL + '/course').pipe(
