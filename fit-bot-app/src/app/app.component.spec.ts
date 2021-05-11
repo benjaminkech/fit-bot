@@ -1,10 +1,31 @@
+import { DatePipe } from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [AppComponent],
+            imports: [
+                HttpClientTestingModule,
+                MatSnackBarModule,
+                MatIconModule,
+                MatFormFieldModule,
+                MatInputModule,
+                ReactiveFormsModule,
+                MatDatepickerModule,
+                MatNativeDateModule,
+            ],
+            providers: [DatePipe],
         }).compileComponents();
     });
 
@@ -18,12 +39,5 @@ describe('AppComponent', () => {
         const fixture = TestBed.createComponent(AppComponent);
         const app = fixture.componentInstance;
         expect(app.title).toEqual('FIT BOT');
-    });
-
-    it('should render title', () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        fixture.detectChanges();
-        const compiled = fixture.nativeElement;
-        expect(compiled.querySelector('.content span').textContent).toContain('FIT BOT app is running!');
     });
 });

@@ -51,6 +51,5 @@ import { MatSelectModule } from '@angular/material/select';
     ],
     providers: [DatePipe, AppConfigService],
     bootstrap: [AppComponent],
-    entryComponents: [IosInstallComponent],
 })
 export class AppModule {}

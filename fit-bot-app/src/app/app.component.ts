@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { combineLatest, Observable, Subject } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
     constructor(
         private courseService: CourseService,
         private datePipe: DatePipe,
-        private snackBar: MatSnackBar,
+        private _snackBar: MatSnackBar,
         private notificationService: NotificationService
     ) {
         this.minDate = new Date();
@@ -64,10 +64,15 @@ export class AppComponent implements OnInit {
 
         // Checks if should display install popup notification:
         if (isIos() && !isInStandaloneMode()) {
-            this.snackBar.openFromComponent(IosInstallComponent, {
-                duration: 8000,
-                horizontalPosition: 'start',
-                panelClass: ['mat-elevation-z3'],
+            // this._snackBar.openFromComponent(IosInstallComponent, {
+            //     duration: 8000,
+            //     horizontalPosition: 'start',
+            //     panelClass: ['mat-elevation-z3'],
+
+            // });
+            this._snackBar.openFromComponent(IosInstallComponent, {
+                horizontalPosition: 'center',
+                verticalPosition: 'bottom',
             });
         } else if (isIos() && isInStandaloneMode()) {
             this.toolbar = false;
@@ -98,7 +103,7 @@ export class AppComponent implements OnInit {
 
         const action = undefined;
         const config: MatSnackBarConfig = {
-            duration: 3000,
+            duration: this.durationInSeconds * 1000,
         };
 
         this.notificationService.postTrigger(body).subscribe(
@@ -115,6 +120,6 @@ export class AppComponent implements OnInit {
     }
 
     openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
-        this.snackBar.open(message, action, config);
+        this._snackBar.open(message, action, config);
     }
 }

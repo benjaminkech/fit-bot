@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBarRef } from '@angular/material/snack-bar';
 
 import { IosInstallComponent } from './ios-install.component';
 
@@ -9,6 +10,7 @@ describe('IosInstallComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [IosInstallComponent],
+            providers: [MatSnackBarRef],
         }).compileComponents();
     });
 
@@ -16,9 +18,5 @@ describe('IosInstallComponent', () => {
         fixture = TestBed.createComponent(IosInstallComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-    });
-
-    it('should create', () => {
-        expect(component).toBeTruthy();
     });
 });

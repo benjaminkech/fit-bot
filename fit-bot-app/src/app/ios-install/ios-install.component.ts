@@ -7,9 +7,9 @@ import { MatSnackBarRef } from '@angular/material/snack-bar';
     styleUrls: ['./ios-install.component.scss'],
 })
 export class IosInstallComponent {
-    constructor(private snackBarRef: MatSnackBarRef<IosInstallComponent>) {}
+    constructor(private _snackBarRef: MatSnackBarRef<IosInstallComponent>) {}
 
-    close() {
-        this.snackBarRef.dismiss();
+    dismiss(): void {
+        this._snackBarRef.dismiss();
     }
 }

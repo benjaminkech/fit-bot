@@ -25,7 +25,7 @@ namespace FitBot.Course
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string url = Settings.Settings.GetEnvironmentVariable("MIGROS_API");
+            string url = await Settings.Settings.GetEnvironmentVariable("MIGROS_API");
 
             var response = await _http.GetStringAsync(url);
 
