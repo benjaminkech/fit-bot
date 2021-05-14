@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
         });
 
         this.requestService.getAll().then((requests: Array<Request>) => {
-            this.phone?.setValue(requests[requests.length - 1].number);
+            this.phone?.setValue(requests[requests.length - 1].phone.number);
         });
 
         if (this.date !== null) {
@@ -93,15 +93,19 @@ export class AppComponent implements OnInit {
     }
 
     onSubmit(): void {
+        const countryCode = '+41';
         const date = this._transformDate(this.form.value.date);
-        const to = '+41' + this.form.value.phone;
+        const to = countryCode + this.form.value.phone;
         const id = this.form.value.course.id;
         const body = { id, date, to } as Trigger;
 
         this._sendNotification(body);
 
         const request = {
-            number: this.form.value.phone,
+            phone: {
+                countryCode,
+                number: this.form.value.phone,
+            },
             date: this.form.value.date,
             course: this.form.value.course,
         } as Request;

@@ -3,12 +3,15 @@ import { DexieService } from './chore/dexie.service';
 import { Course } from './course.service';
 
 export interface Request {
-    number: string;
+    phone: PhoneNumber;
     course?: Course;
     date?: Date;
 }
 
-export interface Phone {}
+export interface PhoneNumber {
+    countryCode: string;
+    number: string;
+}
 
 @Injectable({
     providedIn: 'root',
