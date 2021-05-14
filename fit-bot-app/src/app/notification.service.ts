@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Trigger } from './course.service';
 import { HttpClient } from '@angular/common/http';
-import { AppConfigService } from './appconfig.service';
+import { AppConfigService } from './appconfig/appconfig.service';
 
 @Injectable({
     providedIn: 'root',

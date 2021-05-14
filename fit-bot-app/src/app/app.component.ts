@@ -7,6 +7,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
 import { NotificationService } from './notification.service';
+import { Request, RequestService } from './request.service';
 
 @Component({
     selector: 'app-root',
@@ -27,7 +28,8 @@ export class AppComponent implements OnInit {
         private courseService: CourseService,
         private datePipe: DatePipe,
         private _snackBar: MatSnackBar,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private requestService: RequestService
     ) {
         this.minDate = new Date();
         this.maxDate = new Date();
@@ -36,14 +38,18 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void {
         this.form = new FormGroup({
-            date: new FormControl('', Validators.required),
+            date: new FormControl(new Date(), Validators.required),
             course: new FormControl('', Validators.required),
             phone: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{9}$')]),
         });
 
+        this.requestService.getAll().then((requests: Array<Request>) => {
+            this.phone?.setValue(requests[requests.length - 1].number);
+        });
+
         if (this.date !== null) {
             this.filteredOptions$ = combineLatest([
-                this.date.valueChanges.pipe(startWith('')),
+                this.date.valueChanges.pipe(startWith(this.date.value)),
                 this.courseService.getAllCourses(),
             ]).pipe(
                 map(([date, courses]) => {
@@ -53,23 +59,15 @@ export class AppComponent implements OnInit {
             );
         }
 
-        // Detects if device is on iOS
         const isIos = () => {
             const userAgent = window.navigator.userAgent.toLowerCase();
             return /iphone|ipad|ipod/.test(userAgent);
         };
-        // Detects if device is in standalone mode
+
         const isInStandaloneMode = () =>
             'standalone' in (window as any).navigator && (window as any).navigator.standalone;
 
-        // Checks if should display install popup notification:
         if (isIos() && !isInStandaloneMode()) {
-            // this._snackBar.openFromComponent(IosInstallComponent, {
-            //     duration: 8000,
-            //     horizontalPosition: 'start',
-            //     panelClass: ['mat-elevation-z3'],
-
-            // });
             this._snackBar.openFromComponent(IosInstallComponent, {
                 horizontalPosition: 'center',
                 verticalPosition: 'bottom',
@@ -98,9 +96,23 @@ export class AppComponent implements OnInit {
         const date = this._transformDate(this.form.value.date);
         const to = '+41' + this.form.value.phone;
         const id = this.form.value.course.id;
-
         const body = { id, date, to } as Trigger;
 
+        this._sendNotification(body);
+
+        const request = {
+            number: this.form.value.phone,
+            date: this.form.value.date,
+            course: this.form.value.course,
+        } as Request;
+        this.requestService.add(request);
+    }
+
+    openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
+        this._snackBar.open(message, action, config);
+    }
+
+    private _sendNotification(body: Trigger) {
         const action = undefined;
         const config: MatSnackBarConfig = {
             duration: this.durationInSeconds * 1000,
@@ -117,9 +129,5 @@ export class AppComponent implements OnInit {
                 this.openSnackBar(message, action, config);
             }
         );
-    }
-
-    openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
-        this._snackBar.open(message, action, config);
     }
 }

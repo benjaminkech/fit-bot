@@ -18,15 +18,17 @@ import { MatListModule } from '@angular/material/list';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { IosInstallComponent } from './ios-install/ios-install.component';
-import { AppConfigService } from './appconfig.service';
+import { AppConfigService } from './appconfig/appconfig.service';
 import { AppConfigModule } from './appconfig/appconfig.module';
 import { MatSelectModule } from '@angular/material/select';
+import { ChoreModule } from './chore/chore.module';
 
 @NgModule({
     declarations: [AppComponent, IosInstallComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
+        ChoreModule,
         HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
