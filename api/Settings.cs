@@ -1,33 +1,31 @@
-using System.Net;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace FitBot.Settings
 {
     public static class Settings
     {
-        [Function("Settings")]
-        public static HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req,
-            FunctionContext executionContext)
+        [FunctionName("Settings")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            ILogger log)
         {
-            var logger = executionContext.GetLogger("Settings");
-            logger.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var response = req.CreateResponse(HttpStatusCode.OK);
-
-            string triggerApi = GetEnvironmentVariable("TRIGGER_API");
+            string triggerApi = await GetEnvironmentVariable("TRIGGER_API");
 
             var myObj = new { triggerApi };
 
-            response.WriteAsJsonAsync(myObj);
-
-            return response;
+            return new OkObjectResult(myObj);
         }
-        public static string GetEnvironmentVariable(string name)
+        public static Task<string> GetEnvironmentVariable(string name)
         {
-            return System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
+            return Task.FromResult(System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process));
         }
     }
 }
