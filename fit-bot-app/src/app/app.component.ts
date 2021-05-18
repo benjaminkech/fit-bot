@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { combineLatest, Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
 import { NotificationService } from './notification.service';
@@ -14,7 +14,7 @@ import { Request, RequestService } from './request.service';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
     title = 'FIT BOT';
     durationInSeconds = 5;
     filteredOptions$: Observable<Course[]> | undefined;
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
     logo: string = '../assets/logo.svg';
     minDate: Date;
     maxDate: Date;
+    private unsubscripe$ = new Subject<void>();
 
     constructor(
         private courseService: CourseService,
@@ -78,6 +79,11 @@ export class AppComponent implements OnInit {
         }
     }
 
+    ngOnDestroy(): void {
+        this.unsubscripe$.next();
+        this.unsubscripe$.complete();
+    }
+
     get date(): AbstractControl | null {
         return this.form.get('date');
     }
@@ -122,16 +128,19 @@ export class AppComponent implements OnInit {
             duration: this.durationInSeconds * 1000,
         };
 
-        this.notificationService.postTrigger(body).subscribe(
-            data => {
-                const message = 'You will get a confirmation in a sec. 🎉';
-                this.openSnackBar(message, action, config);
-            },
-            error => {
-                const message = 'Ups there was an error.';
-                config.panelClass = ['snackbar-error'];
-                this.openSnackBar(message, action, config);
-            }
-        );
+        this.notificationService
+            .postTrigger(body)
+            .pipe(takeUntil(this.unsubscripe$))
+            .subscribe(
+                data => {
+                    const message = 'You will get a confirmation in a sec. 🎉';
+                    this.openSnackBar(message, action, config);
+                },
+                error => {
+                    const message = 'Ups there was an error.';
+                    config.panelClass = ['snackbar-error'];
+                    this.openSnackBar(message, action, config);
+                }
+            );
     }
 }
