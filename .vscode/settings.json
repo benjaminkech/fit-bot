@@ -1,9 +1,10 @@
 {
-    "azureFunctions.deploySubpath": "api/bin/Release/netcoreapp3.1/publish",
+    "azureFunctions.deploySubpath": "api/bin/Release/net5.0/publish",
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~3",
     "azureFunctions.preDeployTask": "publish",
     "eslint.workingDirectories": [
         "./fit-bot-app"
-      ]
+      ],
+      "azureFunctions.projectSubpath": "api"
 }

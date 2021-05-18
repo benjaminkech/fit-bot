@@ -1,33 +1,38 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Logging;
 
 namespace FitBot.Course
 {
     public class Course
     {
-        private readonly HttpClient _http;
-        public Course(HttpClient httpClient)
+        private readonly IHttpClientFactory _clientFactory;
+
+        public Course(IHttpClientFactory clientFactory)
         {
-            _http = httpClient;
+            _clientFactory = clientFactory;
         }
 
-        [FunctionName("Course")]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        [Function("Course")]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req,
+            FunctionContext executionContext)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            var logger = executionContext.GetLogger("Course");
+            logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            string url = await Settings.Settings.GetEnvironmentVariable("GYM_API");
+            string uri = Settings.Settings.GetEnvironmentVariable("GYM_API");
 
-            var response = await _http.GetStringAsync(url);
+            var client = _clientFactory.CreateClient();
+            var data = await client.GetStringAsync(uri);
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
-            return new OkObjectResult(response);
+            response.WriteString(data);
+
+            return response;
         }
     }
 }
