@@ -99,41 +99,33 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(): void {
-        const countryCode = '+41';
-        const phone = countryCode + this.form.value.phone;
-        const id = this.form.value.course.id;
-        const body = { id, phone } as Trigger;
-
-        this._sendNotification(body);
-
-        const request = {
-            phone: {
-                countryCode,
-                number: this.form.value.phone,
-            },
-            date: new Date(),
-            course: this.form.value.course,
-        } as Request;
-        this.requestService.add(request);
-    }
-
-    openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
-        this._snackBar.open(message, action, config);
-    }
-
-    private _sendNotification(body: Trigger) {
         const action = undefined;
         const config: MatSnackBarConfig = {
             duration: this.durationInSeconds * 1000,
         };
 
+        const countryCode = '+41';
+        const phone = countryCode + this.form.value.phone;
+        const id = this.form.value.course.id;
+        const body = { id, phone } as Trigger;
+
         this.notificationService
-            .postTrigger(body)
+            .getNotification(body)
             .pipe(takeUntil(this.unsubscripe$))
             .subscribe(
-                data => {
+                status => {
                     const message = 'You will get a confirmation in a sec. 🎉';
                     this.openSnackBar(message, action, config);
+
+                    const request = {
+                        phone: {
+                            countryCode,
+                            number: this.form.value.phone,
+                        },
+                        course: this.form.value.course,
+                        status: status,
+                    } as Request;
+                    this.requestService.add(request);
                 },
                 error => {
                     const message = 'Ups there was an error.';
@@ -141,5 +133,9 @@ export class AppComponent implements OnInit, OnDestroy {
                     this.openSnackBar(message, action, config);
                 }
             );
+    }
+
+    openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
+        this._snackBar.open(message, action, config);
     }
 }

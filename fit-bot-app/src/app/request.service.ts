@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { DexieService } from './chore/dexie.service';
 import { Course } from './course.service';
+import { StatusQueryResponse } from './notification.service';
 
 export interface Request {
     phone: PhoneNumber;
-    course?: Course;
-    date?: Date;
+    course: Course;
+    status: StatusQueryResponse;
 }
 
 export interface PhoneNumber {
