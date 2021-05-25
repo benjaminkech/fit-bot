@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -69,8 +69,7 @@ export interface Response {
 
 export interface Trigger {
     id: string;
-    date: string;
-    to: string;
+    phone: string;
 }
 
 @Injectable({

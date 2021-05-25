@@ -100,10 +100,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     onSubmit(): void {
         const countryCode = '+41';
-        const date = this._transformDate(this.form.value.date);
-        const to = countryCode + this.form.value.phone;
+        const phone = countryCode + this.form.value.phone;
         const id = this.form.value.course.id;
-        const body = { id, date, to } as Trigger;
+        const body = { id, phone } as Trigger;
 
         this._sendNotification(body);
 
@@ -112,7 +111,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 countryCode,
                 number: this.form.value.phone,
             },
-            date: this.form.value.date,
+            date: new Date(),
             course: this.form.value.course,
         } as Request;
         this.requestService.add(request);
