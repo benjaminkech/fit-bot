@@ -34,18 +34,23 @@
                 </mat-select>
             </mat-form-field>
         </div>
-        <mat-list *ngIf="course?.value?.id" class="details">
-            <mat-list-item> <mat-icon matSuffix>schedule</mat-icon>{{ course?.value.timeStart }} </mat-list-item>
-            <mat-list-item>
-                <mat-icon matSuffix>event_available</mat-icon>{{ course?.value.availablePlaces }}/{{
-                    course?.value.maxPlaces
-                }}
-            </mat-list-item>
-            <mat-list-item> <mat-icon matSuffix>directions_run</mat-icon>{{ course?.value.instructor }} </mat-list-item>
-        </mat-list>
-        <button mat-raised-button color="primary" [disabled]="!form.valid">
-            <mat-icon>notifications</mat-icon>
-            {{ getFilteredCourses().length !== 0 ? 'Get Notification' : 'No courses available' }}
-        </button>
+        <mat-progress-bar *ngIf="loading" mode="query"></mat-progress-bar>
+        <div *ngIf="!loading">
+            <mat-list *ngIf="course?.value?.id" class="details">
+                <mat-list-item> <mat-icon matSuffix>schedule</mat-icon>{{ course?.value.timeStart }} </mat-list-item>
+                <mat-list-item>
+                    <mat-icon matSuffix>event_available</mat-icon>{{ course?.value.availablePlaces }}/{{
+                        course?.value.maxPlaces
+                    }}
+                </mat-list-item>
+                <mat-list-item>
+                    <mat-icon matSuffix>directions_run</mat-icon>{{ course?.value.instructor }}
+                </mat-list-item>
+            </mat-list>
+            <button mat-raised-button color="primary" [disabled]="!form.valid">
+                <mat-icon>notifications</mat-icon>
+                {{ getFilteredCourses().length !== 0 ? 'Get Notification' : 'No courses available' }}
+            </button>
+        </div>
     </form>
 </div>

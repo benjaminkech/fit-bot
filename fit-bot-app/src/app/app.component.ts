@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
     maxDate: Date;
     hide = true;
     private unsubscripe$ = new Subject<void>();
+    loading = false;
 
     constructor(
         private courseService: CourseService,
@@ -56,11 +57,15 @@ export class AppComponent implements OnInit, OnDestroy {
             this.userId.valueChanges
                 .pipe(
                     switchMap(id => {
+                        this.loading = true;
                         return this.courseService.getAllCourses(id);
                     }),
                     takeUntil(this.unsubscripe$)
                 )
-                .subscribe(courses => (this.courses = courses));
+                .subscribe(courses => {
+                    this.loading = false;
+                    this.courses = courses;
+                });
         }
 
         if (this.date !== null) {
