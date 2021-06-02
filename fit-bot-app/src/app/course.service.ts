@@ -68,8 +68,8 @@ export interface Response {
 }
 
 export interface Trigger {
-    id: string;
-    phone: string;
+    courseId: string;
+    userId: string;
 }
 
 @Injectable({
@@ -81,12 +81,12 @@ export class CourseService {
 
     constructor(private http: HttpClient) {}
 
-    getAllCourses(): Observable<Course[]> {
-        return this.http.get<Response>(this.rootURL + '/course').pipe(
+    getAllCourses(userId: string): Observable<Course[]> {
+        return this.http.get<Response>(this.rootURL + '/course/' + userId).pipe(
             map(res =>
                 res.courses.filter(c => {
                     const unixTimeZero = Date.parse(c.date + 'T' + c.timeStart + this.timezone);
-                    return c.enrolment === false && unixTimeZero > Date.now();
+                    return c.enrolment === false && c.booked === false && unixTimeZero > Date.now();
                 })
             )
         );

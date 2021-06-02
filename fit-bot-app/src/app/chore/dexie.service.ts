@@ -8,7 +8,7 @@ export class DexieService extends Dexie {
     constructor() {
         super('FitBot');
         this.version(1).stores({
-            requests: '++',
+            userId: '++',
         });
     }
 }

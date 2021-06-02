@@ -2,12 +2,12 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { combineLatest, Observable, Subject } from 'rxjs';
-import { map, startWith, takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
 import { NotificationService } from './notification.service';
-import { Request, RequestService } from './request.service';
+import { UserService } from './user.service';
 
 @Component({
     selector: 'app-root',
@@ -18,6 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
     title = 'FIT BOT';
     durationInSeconds = 5;
     filteredOptions$: Observable<Course[]> | undefined;
+    courses: Course[] = [];
     form: FormGroup = new FormGroup({});
     toolbar: boolean = true;
     logo: string = '../assets/logo.svg';
@@ -30,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private datePipe: DatePipe,
         private _snackBar: MatSnackBar,
         private notificationService: NotificationService,
-        private requestService: RequestService
+        private userService: UserService
     ) {
         this.minDate = new Date();
         this.maxDate = new Date();
@@ -41,23 +42,28 @@ export class AppComponent implements OnInit, OnDestroy {
         this.form = new FormGroup({
             date: new FormControl(new Date(), Validators.required),
             course: new FormControl('', Validators.required),
-            phone: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{9}$')]),
+            userId: new FormControl('', Validators.required),
         });
 
-        this.requestService.getAll().then((requests: Array<Request>) => {
-            this.phone?.setValue(requests[requests.length - 1].phone.number);
+        this.userService.getUserId().then((id: string | undefined) => {
+            if (id) {
+                this.userId?.setValue(id);
+            }
         });
+
+        if (this.userId !== null) {
+            this.userId.valueChanges
+                .pipe(
+                    switchMap(id => {
+                        return this.courseService.getAllCourses(id);
+                    }),
+                    takeUntil(this.unsubscripe$)
+                )
+                .subscribe(courses => (this.courses = courses));
+        }
 
         if (this.date !== null) {
-            this.filteredOptions$ = combineLatest([
-                this.date.valueChanges.pipe(startWith(this.date.value)),
-                this.courseService.getAllCourses(),
-            ]).pipe(
-                map(([date, courses]) => {
-                    this.course?.reset();
-                    return courses.filter(course => course.date === this._transformDate(date));
-                })
-            );
+            this.date.valueChanges.pipe(takeUntil(this.unsubscripe$)).subscribe(date => this.course?.reset());
         }
 
         const isIos = () => {
@@ -90,8 +96,8 @@ export class AppComponent implements OnInit, OnDestroy {
     get course(): AbstractControl | null {
         return this.form.get('course');
     }
-    get phone(): AbstractControl | null {
-        return this.form.get('phone');
+    get userId(): AbstractControl | null {
+        return this.form.get('userId');
     }
 
     private _transformDate(value: string): string | null {
@@ -104,10 +110,10 @@ export class AppComponent implements OnInit, OnDestroy {
             duration: this.durationInSeconds * 1000,
         };
 
-        const countryCode = '+41';
-        const phone = countryCode + this.form.value.phone;
-        const id = this.form.value.course.id;
-        const body = { id, phone } as Trigger;
+        const courseId = this.form.value.course.id;
+        const userId = this.form.value.userId;
+
+        const body = { courseId, userId } as Trigger;
 
         this.notificationService
             .getNotification(body)
@@ -117,15 +123,7 @@ export class AppComponent implements OnInit, OnDestroy {
                     const message = 'You will get a confirmation in a sec. 🎉';
                     this.openSnackBar(message, action, config);
 
-                    const request = {
-                        phone: {
-                            countryCode,
-                            number: this.form.value.phone,
-                        },
-                        course: this.form.value.course,
-                        status: status,
-                    } as Request;
-                    this.requestService.add(request);
+                    this.userService.put(this.form.value.userId);
                 },
                 error => {
                     const message = 'Ups there was an error.';
@@ -137,5 +135,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
         this._snackBar.open(message, action, config);
+    }
+
+    getFilteredCourses(): Course[] {
+        let courses: Course[] = [];
+        courses = this.courses.filter(course => course.date === this._transformDate(this.date?.value));
+        return courses;
     }
 }
