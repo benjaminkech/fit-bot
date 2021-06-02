@@ -6,7 +6,17 @@
     <form [formGroup]="form" class="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="fill" class="field-full-width">
             <mat-label>User Id</mat-label>
-            <input matInput placeholder="User Id" formControlName="userId" />
+            <input matInput [type]="hide ? 'password' : 'text'" placeholder="User Id" formControlName="userId" />
+            <button
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hide"
+                type="button"
+            >
+                <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
         </mat-form-field>
         <mat-form-field appearance="fill" class="field-full-width">
             <mat-label>Choose a date</mat-label>

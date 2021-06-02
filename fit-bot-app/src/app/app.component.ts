@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
     logo: string = '../assets/logo.svg';
     minDate: Date;
     maxDate: Date;
+    hide = true;
     private unsubscripe$ = new Subject<void>();
 
     constructor(
