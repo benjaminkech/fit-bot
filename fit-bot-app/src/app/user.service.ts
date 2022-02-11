@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import Dexie from 'dexie';
 import { DexieService } from './chore/dexie.service';
 
 @Injectable({
