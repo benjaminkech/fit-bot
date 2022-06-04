@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { Course, CourseService, Trigger } from './course.service';
 import { IosInstallComponent } from './ios-install/ios-install.component';
@@ -17,15 +17,14 @@ import { UserService } from './user.service';
 export class AppComponent implements OnInit, OnDestroy {
     title = 'FIT BOT';
     durationInSeconds = 5;
-    filteredOptions$: Observable<Course[]> | undefined;
     courses: Course[] = [];
-    form: FormGroup = new FormGroup({});
+    form: UntypedFormGroup = new UntypedFormGroup({});
     toolbar: boolean = true;
     logo: string = '../assets/logo.svg';
     minDate: Date;
     maxDate: Date;
     hide = true;
-    private unsubscripe$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
     loading = false;
 
     constructor(
@@ -41,10 +40,10 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.form = new FormGroup({
-            date: new FormControl(new Date(), Validators.required),
-            course: new FormControl('', Validators.required),
-            userId: new FormControl('', Validators.required),
+        this.form = new UntypedFormGroup({
+            date: new UntypedFormControl(new Date(), Validators.required),
+            course: new UntypedFormControl('', Validators.required),
+            userId: new UntypedFormControl('', Validators.required),
         });
 
         this.userService.getUserId().then((id: string | undefined) => {
@@ -60,7 +59,7 @@ export class AppComponent implements OnInit, OnDestroy {
                         this.loading = true;
                         return this.courseService.getAllCourses(id);
                     }),
-                    takeUntil(this.unsubscripe$)
+                    takeUntil(this.destroy$)
                 )
                 .subscribe(courses => {
                     this.loading = false;
@@ -69,7 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
 
         if (this.date !== null) {
-            this.date.valueChanges.pipe(takeUntil(this.unsubscripe$)).subscribe(date => this.course?.reset());
+            this.date.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.course?.reset());
         }
 
         const isIos = () => {
@@ -92,8 +91,8 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.unsubscripe$.next();
-        this.unsubscripe$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     get date(): AbstractControl | null {
@@ -123,20 +122,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.notificationService
             .getNotification(body)
-            .pipe(takeUntil(this.unsubscripe$))
-            .subscribe(
-                status => {
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: () => {
                     const message = 'You will get a confirmation in a sec. 🎉';
                     this.openSnackBar(message, action, config);
 
                     this.userService.put(this.form.value.userId);
                 },
-                error => {
+                error: () => {
                     const message = 'Ups there was an error.';
                     config.panelClass = ['snackbar-error'];
                     this.openSnackBar(message, action, config);
-                }
-            );
+                },
+            });
     }
 
     openSnackBar(message: string, action: string | undefined, config: MatSnackBarConfig): void {
@@ -144,7 +143,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     getFilteredCourses(): Course[] {
-        let courses: Course[] = [];
+        let courses: Course[];
         courses = this.courses.filter(course => course.date === this._transformDate(this.date?.value));
         return courses;
     }
